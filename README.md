@@ -1,35 +1,15 @@
-# frontend-vue3
+# Cara menjalankan program ini
 
-This template should help get you started developing with Vue 3 in Vite.
+1. Cloning project ini menggunakan github clone
+2. Install project menggunakan command "npm install"
+3. Jalankan project ini mengguakan command "npm run dev"
 
-## Recommended IDE Setup
+# Informasi program
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- berisi program frontend menggunakan vue 3, vite, primevue
+- merupakan program single page untuk CRUD data pegawai (employee)
+- hanya terdapat 1 tabel pada database, yaitu employee
+- saya tidak melakukan normalisasi data, karena aplikasi ini bersifat sederhana untuk menunjukkan fungsionalitas CRUD nya
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+# Contoh pengisian .env
+VITE_BASE_URL=http://localhost:4000/employees/
