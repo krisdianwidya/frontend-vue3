@@ -8,7 +8,7 @@
           icon="pi pi-plus"
           severity="success"
           class="mr-2"
-          @click="toggleModal(true)"
+          @click="toggleModal(true, null)"
         />
       </template>
     </Toolbar>
@@ -51,7 +51,26 @@
           </p>
         </template>
       </Column>
-      <Column header="Action"></Column>
+      <Column header="Action">
+        <template #body="slotProps">
+          <div class="flex">
+            <Button
+              icon="pi pi-pencil"
+              outlined
+              rounded
+              class="mr-2"
+              @click="toggleModal(true, slotProps.data)"
+            />
+            <Button
+              icon="pi pi-trash"
+              outlined
+              rounded
+              severity="danger"
+              @click="toggleModal(true, slotProps.data)"
+            />
+          </div>
+        </template>
+      </Column>
     </DataTable>
 
     <!-- dialog insert -->
@@ -59,6 +78,8 @@
       :showModalProps="showModal"
       @close="toggleModal"
       @insertUpdate="fetchAllEmployee"
+      :employee="employeeData"
+      :addMode="addMode"
     />
   </div>
 </template>
@@ -71,6 +92,7 @@ import axios from "axios";
 import Modal from "./components/Modal.vue";
 
 const employees = ref([]);
+const employeeData = ref({});
 
 onMounted(() => {
   fetchAllEmployee();
@@ -94,8 +116,15 @@ const formattedWorkPeriod = (joinDate) => {
 };
 
 const showModal = ref(false);
+const addMode = ref(true);
 
-const toggleModal = (value) => {
+const toggleModal = (value, data) => {
   showModal.value = value;
+  if (data) {
+    employeeData.value = { ...data };
+    addMode.value = false;
+  } else {
+    addMode.value = true;
+  }
 };
 </script>

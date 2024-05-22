@@ -3,7 +3,7 @@
   <Dialog
     v-model:visible="showModal"
     modal
-    header="Tambah data pegawai"
+    :header="props.addMode ? 'Tambah data pegawai' : 'Ubah data pegawai'"
     :closable="false"
   >
     <div class="flex align-items-center gap-3 mb-3">
@@ -70,11 +70,15 @@
     <div class="flex justify-content-end gap-2">
       <Button
         type="button"
-        label="Cancel"
+        label="Batalkan"
         @click="closeModal"
         severity="secondary"
       ></Button>
-      <Button type="button" label="Save" @click="insertEmployee"></Button>
+      <Button
+        type="button"
+        :label="props.addMode ? 'Simpan' : 'Update'"
+        @click="insertEmployee"
+      ></Button>
     </div>
   </Dialog>
 
@@ -96,6 +100,8 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  employee: Object,
+  addMode: Boolean,
 });
 
 watch(
@@ -107,9 +113,25 @@ watch(
   }
 );
 
+watch(
+  () => props.employee,
+  (newVal) => {
+    if (newVal) {
+      firstName.value = newVal.first_name;
+      lastName.value = newVal.last_name;
+      gender.value = newVal.gender;
+      selectedRole.value = { name: newVal.role };
+      salary.value = newVal.salary;
+      birthDate.value = new Date(newVal.birth_date);
+      joinDate.value = new Date(newVal.join_date);
+    }
+  }
+);
+
 const emit = defineEmits(["close", "insertUpdate"]);
 const closeModal = () => {
   showModal.value = false;
+  resetValue();
   emit("close", false);
 };
 
@@ -157,16 +179,27 @@ const insertEmployee = async () => {
     join_date: formattedDate(joinDate.value),
   };
 
-  await axios.post(import.meta.env.VITE_BASE_URL, data);
+  props.addMode
+    ? await axios.post(import.meta.env.VITE_BASE_URL, data)
+    : await axios.patch(
+        import.meta.env.VITE_BASE_URL + props.employee.employee_id,
+        data
+      );
   resetValue();
   loading.value = false;
   closeModal();
   emit("insertUpdate");
+
+  let detailWordToast = "";
+  props.addMode
+    ? (detailWordToast = "ditambahkan")
+    : (detailWordToast = "diupdate");
+
   toast.add({
     severity: "success",
     summary: "Berhasil",
-    detail: "Data pegawai telah ditambahkan",
-    life: 3000,
+    detail: `Data pegawai telah ${detailWordToast}`,
+    life: 5000,
   });
 };
 </script>
