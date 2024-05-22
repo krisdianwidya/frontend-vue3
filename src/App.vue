@@ -8,7 +8,7 @@
           icon="pi pi-plus"
           severity="success"
           class="mr-2"
-          @click="toggleModal(true, null)"
+          @click="toggleModal(true, 'insertUpdate', null)"
         />
       </template>
     </Toolbar>
@@ -59,27 +59,33 @@
               outlined
               rounded
               class="mr-2"
-              @click="toggleModal(true, slotProps.data)"
+              @click="toggleModal(true, 'insertUpdate', slotProps.data)"
             />
             <Button
               icon="pi pi-trash"
               outlined
               rounded
               severity="danger"
-              @click="toggleModal(true, slotProps.data)"
+              @click="toggleModal(true, 'delete', slotProps.data)"
             />
           </div>
         </template>
       </Column>
     </DataTable>
 
-    <!-- dialog insert -->
-    <Modal
+    <InsertUpdateModal
       :showModalProps="showModal"
       @close="toggleModal"
       @insertUpdate="fetchAllEmployee"
       :employee="employeeData"
       :addMode="addMode"
+    />
+
+    <DeleteModal
+      :showModalProps="showModalDelete"
+      @close="toggleModal"
+      @delete="fetchAllEmployee"
+      :employee="employeeData"
     />
   </div>
 </template>
@@ -89,7 +95,8 @@ import { ref, onMounted } from "vue";
 import { format, differenceInYears, differenceInMonths } from "date-fns";
 import axios from "axios";
 
-import Modal from "./components/Modal.vue";
+import InsertUpdateModal from "./components/InsertUpdateModal.vue";
+import DeleteModal from "./components/DeleteModal.vue";
 
 const employees = ref([]);
 const employeeData = ref({});
@@ -117,14 +124,23 @@ const formattedWorkPeriod = (joinDate) => {
 
 const showModal = ref(false);
 const addMode = ref(true);
+const showModalDelete = ref(false);
 
-const toggleModal = (value, data) => {
-  showModal.value = value;
-  if (data) {
+const toggleModal = (value, type, data) => {
+  if (type === "insertUpdate") {
+    showModal.value = value;
+    if (data) {
+      employeeData.value = { ...data };
+      addMode.value = false;
+    } else {
+      addMode.value = true;
+    }
+  } else if (type === "delete") {
+    showModalDelete.value = value;
     employeeData.value = { ...data };
-    addMode.value = false;
   } else {
-    addMode.value = true;
+    showModal.value = false;
+    showModalDelete.value = false;
   }
 };
 </script>
